@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: eu_flights
+    database: aviationstack-480614
+    schema: flights_us
+
+    tables:
+      - name: static_flights
+      - name: flights_live_curated

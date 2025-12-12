@@ -28,6 +28,6 @@ select
     flight_number,
 
     upper(trim(source_dep_icao)) as source_dep_icao,
-    safe_cast(ingestion_time_utc as timestamp) as ingestion_ts,
+    timestamp(ingestion_time_utc) as ingestion_ts,
     ingestion_date
 from src;

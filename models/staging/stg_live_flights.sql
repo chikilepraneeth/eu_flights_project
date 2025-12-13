@@ -37,4 +37,4 @@ select
 
   safe_cast(ingestion_time_utc as timestamp) as ingestion_ts,
   ingestion_date
-from src;
+from src

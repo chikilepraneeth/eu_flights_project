@@ -1,6 +1,6 @@
 {{ config(materialized='view') }}
 
--- 1) Historical baseline from static dataset
+
 with static_agg as (
     select
         airport_icao,
@@ -14,7 +14,7 @@ with static_agg as (
     group by 1,2,3
 ),
 
--- 2) Live operational aggregation
+
 live_agg as (
     select
         dep_icao as airport_icao,
@@ -23,19 +23,19 @@ live_agg as (
 
         avg(dep_delay_min) as avg_dep_delay_min,
 
-        -- robust delay stats
+        
         approx_quantiles(dep_delay_min, 100)[offset(50)] as median_dep_delay_min,
         approx_quantiles(dep_delay_min, 100)[offset(90)] as p90_dep_delay_min,
 
-        -- flight status counts
+        
         sum(case when status = 'active' then 1 else 0 end) as active_flights,
         sum(case when status = 'landed' then 1 else 0 end) as landed_flights,
         sum(case when status = 'cancelled' then 1 else 0 end) as cancelled_flights,
 
-        -- network / connectivity
+        
         count(distinct arr_icao) as distinct_destinations,
 
-        -- freshness of live data
+        
         max(ingestion_ts) as last_ingestion_ts
 
     from {{ ref('stg_live_flights') }}
@@ -43,18 +43,18 @@ live_agg as (
     group by 1
 )
 
--- 3) Combine baseline + live, and derive “cool” metrics
+
 select
     s.airport_icao,
     s.airport_name,
     s.country_name,
 
-    -- baseline
+    
     s.avg_daily_ifr_movements,
     s.avg_daily_dep_ifr,
     s.avg_daily_arr_ifr,
 
-    -- live
+    
     l.live_departures,
     l.avg_dep_delay_min,
     l.median_dep_delay_min,
@@ -65,7 +65,7 @@ select
     l.distinct_destinations,
     l.last_ingestion_ts,
 
-    -- derived metrics
+   
     safe_divide(l.live_departures, s.avg_daily_dep_ifr) as congestion_index,
     safe_divide(l.cancelled_flights, l.live_departures) as cancellation_rate
 

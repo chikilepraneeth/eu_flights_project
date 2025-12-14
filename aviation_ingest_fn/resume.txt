@@ -1,0 +1,7 @@
+gcloud scheduler jobs pause ingest-aviationstack-daily --location=us-central1
+
+gcloud scheduler jobs pause ingest-aviationstack-daily --location=us-central1
+
+
+
+gcloud config set project aviationstack-480614
